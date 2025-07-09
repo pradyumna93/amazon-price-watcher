@@ -14,10 +14,10 @@ HEADERS = {
 }
 
 # Twilio config
-TWILIO_ACCOUNT_SID = "your_account_sid"
-TWILIO_AUTH_TOKEN = "your_auth_token"
-TWILIO_WHATSAPP_NUMBER = "whatsapp:+14155238886"  # Twilio sandbox number
-TO_WHATSAPP_NUMBER = "whatsapp:+91xxxxxxxxxx"      # Your verified number
+TWILIO_ACCOUNT_SID = "AC724444607f54751b98a09c2a632cf475"
+TWILIO_AUTH_TOKEN = "adaa21ec60e45ef27bf87966a6285342"
+TWILIO_WHATSAPP_NUMBER = "whatsapp:+12185277496"  # Twilio sandbox number
+TO_WHATSAPP_NUMBER = "whatsapp:+919337740362"      # Your verified number
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
