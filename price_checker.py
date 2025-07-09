@@ -2,11 +2,11 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from twilio.rest import Client
+from datetime import datetime
 
-# Load config from environment (GitHub Secrets)
+# Load from environment
 PRODUCT_URL = os.getenv("PRODUCT_URL")
 TARGET_PRICE = float(os.getenv("TARGET_PRICE"))
-
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_WHATSAPP_NUMBER = os.getenv("TWILIO_WHATSAPP_NUMBER")
@@ -17,7 +17,6 @@ HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/114.0.0.0 Safari/537.36"
 }
-
 
 def check_price():
     try:
@@ -32,15 +31,17 @@ def check_price():
         print(f"Current Price: ₹{price}")
 
         if price <= TARGET_PRICE:
-            message_body = (
+            price_alert = (
                 f"🔥 Price Drop Alert!\n\n{title}\n"
-                f"Current Price: ₹{price}\n\nBuy Now: {PRODUCT_URL}"
+                f"Price: ₹{price}\nBuy Now: {PRODUCT_URL}"
             )
-            send_whatsapp(message_body)
-        else:
-            print("Price is still above the target.")
+            send_whatsapp(price_alert)
+
+        send_status_whatsapp(success=True)
+
     except Exception as e:
-        print("Error checking price:", e)
+        print("Error:", e)
+        send_status_whatsapp(success=False, error_message=str(e))
 
 
 def send_whatsapp(message):
@@ -53,7 +54,16 @@ def send_whatsapp(message):
         )
         print("✅ WhatsApp message sent:", message.sid)
     except Exception as e:
-        print("❌ Failed to send WhatsApp message:", e)
+        print("❌ Failed to send WhatsApp:", e)
+
+
+def send_status_whatsapp(success=True, error_message=None):
+    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    if success:
+        body = f"✅ Price check completed successfully at {timestamp}"
+    else:
+        body = f"❌ Price check failed at {timestamp}. Error: {error_message[:100]}"
+    send_whatsapp(body)
 
 
 if __name__ == "__main__":
