@@ -1,0 +1,32 @@
+name: Amazon Price Check
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour (UTC)
+  workflow_dispatch:     # Manual trigger option
+
+jobs:
+  price-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run price check script
+      env:
+        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+        TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        TO_WHATSAPP_NUMBER: ${{ secrets.TO_WHATSAPP_NUMBER }}
+        TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+        PRODUCT_URL: ${{ secrets.PRODUCT_URL }}
+        TARGET_PRICE: ${{ secrets.TARGET_PRICE }}
+      run: python price_checker.py
